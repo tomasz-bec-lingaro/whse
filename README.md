@@ -55,12 +55,8 @@ GitHub Actions publishes the Docker image to GitHub Container Registry:
 ghcr.io/tomasz-bec-lingaro/hse
 ```
 
-Published tags include:
-
-- `0.1.0` and `v0.1.0` from `tool.poetry.version` in `pyproject.toml`
-- commit SHA for immutable builds
-- `main` for the main branch
-- `latest` for the default branch
+The published tag is the package version from `tool.poetry.version` in `pyproject.toml`,
+for example `0.1.0`.
 
 If the package is private, authenticate to GHCR first:
 

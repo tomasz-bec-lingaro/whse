@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## HSE-010 - Simplify package tags - 2026-10-01
+
+- Simplified GHCR publishing to use only the package version tag, for example `0.1.0`.
+
 ## HSE-009 - Package version tags and run docs - 2026-10-01
 
 - Added GHCR image tags based on the Poetry package version from `pyproject.toml`.

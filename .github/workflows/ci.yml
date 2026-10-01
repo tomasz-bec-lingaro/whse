@@ -157,11 +157,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=sha,prefix=
-            type=ref,event=branch
             type=raw,value=${{ steps.package-version.outputs.version }}
-            type=raw,value=v${{ steps.package-version.outputs.version }}
-            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
