@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## HSE-009 - Package version tags and run docs - 2026-10-01
+
+- Added GHCR image tags based on the Poetry package version from `pyproject.toml`.
+- Documented how to pull and run the published Docker package from GitHub Container Registry.
+
 ## HSE-008 - GitHub Actions coverage summary - 2026-10-01
 
 - Added a GitHub Actions step that publishes pytest coverage to the job summary after tests.

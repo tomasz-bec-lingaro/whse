@@ -47,6 +47,48 @@ Services:
 
 The API container runs Alembic migrations before starting the FastAPI server.
 
+## Running the Published Package
+
+GitHub Actions publishes the Docker image to GitHub Container Registry:
+
+```text
+ghcr.io/tomasz-bec-lingaro/hse
+```
+
+Published tags include:
+
+- `0.1.0` and `v0.1.0` from `tool.poetry.version` in `pyproject.toml`
+- commit SHA for immutable builds
+- `main` for the main branch
+- `latest` for the default branch
+
+If the package is private, authenticate to GHCR first:
+
+```bash
+echo "<github-token>" | docker login ghcr.io -u "<github-username>" --password-stdin
+```
+
+Pull a versioned image:
+
+```bash
+docker pull ghcr.io/tomasz-bec-lingaro/hse:0.1.0
+```
+
+Run the published package with the local PostgreSQL and Azurite services:
+
+```bash
+docker compose --project-name hse up -d postgres azurite
+docker run --rm \
+  --name hse-delivery-api \
+  --network hse_default \
+  -p 8000:8000 \
+  --env-file .env.example \
+  ghcr.io/tomasz-bec-lingaro/hse:0.1.0
+```
+
+For production, use the same image tag with real environment values injected from the deployment
+platform secret store.
+
 ## Environment Variables
 
 Use `.env.example` as the template for local configuration.
