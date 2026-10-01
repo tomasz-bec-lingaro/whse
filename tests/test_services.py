@@ -24,6 +24,26 @@ def test_invalid_upload_type_is_rejected() -> None:
         validate_upload(
             filename="document.txt",
             content_type="text/plain",
+            content=b"plain text",
             size_bytes=10,
             max_size_mb=10,
         )
+
+
+def test_upload_content_signature_is_validated() -> None:
+    with pytest.raises(HTTPException):
+        validate_upload(
+            filename="document.pdf",
+            content_type="application/pdf",
+            content=b"plain text",
+            size_bytes=10,
+            max_size_mb=10,
+        )
+
+    validate_upload(
+        filename="document.pdf",
+        content_type="application/pdf",
+        content=b"%PDF-1.4 sample",
+        size_bytes=15,
+        max_size_mb=10,
+    )

@@ -33,7 +33,7 @@ The workflow:
 - checks formatting
 - runs pytest with coverage
 - builds the Docker image
-- publishes the image to GitHub Container Registry on non-PR runs
+- publishes the image to GitHub Container Registry only on pushes to `main`
 
 Image path:
 
@@ -41,7 +41,7 @@ Image path:
 ghcr.io/tomasz-bec-lingaro/hse:<tag>
 ```
 
-Pull request builds do not push images.
+Pull request and manual workflow builds do not push images.
 
 ## Secrets
 
@@ -55,6 +55,7 @@ For production deployment, add these repository or environment secrets when the 
 | `AZURE_STORAGE_CONNECTION_STRING` | Production Azure Blob Storage connection string |
 | `AZURE_STORAGE_CONTAINER_NAME` | Production Blob Storage container name |
 | `CORS_ALLOWED_ORIGINS` | Allowed frontend origins |
+| `API_KEY` | Production API key for non-health endpoints |
 
 Example commands:
 
@@ -63,7 +64,7 @@ gh secret set DATABASE_URL --repo tomasz-bec-lingaro/hse
 gh secret set AZURE_STORAGE_CONNECTION_STRING --repo tomasz-bec-lingaro/hse
 gh secret set AZURE_STORAGE_CONTAINER_NAME --repo tomasz-bec-lingaro/hse
 gh secret set CORS_ALLOWED_ORIGINS --repo tomasz-bec-lingaro/hse
+gh secret set API_KEY --repo tomasz-bec-lingaro/hse
 ```
 
 Only run these commands with real values. Do not commit secrets to the repository.
-

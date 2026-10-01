@@ -59,11 +59,17 @@ Required variables:
 - `AZURE_STORAGE_CONNECTION_STRING`
 - `AZURE_STORAGE_CONTAINER_NAME`
 - `MAX_UPLOAD_SIZE_MB`
+- `UPLOAD_RATE_LIMIT_PER_MINUTE`
+- `UPLOAD_RATE_LIMIT_WINDOW_SECONDS`
 - `CORS_ALLOWED_ORIGINS`
+- `API_KEY`
+- `API_KEY_ROLES`
 
 Do not commit real secrets to the repository.
 
 For production, use `.env.production.example` as a template and inject real values through the deployment platform secret store.
+
+All non-health API endpoints require an `X-API-Key` header. The local Docker Compose stack uses `local-dev-api-key` by default. Replace it outside local development.
 
 ## Local Development Without Docker
 
@@ -106,8 +112,25 @@ poetry run pytest
 3. Create a delivery with `POST /deliveries`.
 4. Upload a PDF or JPG document with `POST /deliveries/{delivery_id}/documents`.
 5. List documents with `GET /deliveries/{delivery_id}/documents`.
-6. Download a document with `GET /deliveries/{delivery_id}/documents/{document_id}/download`.
+6. Stream a document download with `GET /deliveries/{delivery_id}/documents/{document_id}/download`.
 7. Change delivery status with `PATCH /deliveries/{delivery_id}/status`.
+
+Example authenticated local request:
+
+```bash
+curl -H "X-API-Key: local-dev-api-key" http://localhost:8000/deliveries
+```
+
+## Concurrency Model
+
+The service uses FastAPI's concurrency model according to the type of work being executed.
+Document upload, download, and delete paths use synchronous SQLAlchemy sessions and the synchronous
+Azure Blob Storage SDK, so they are implemented as regular FastAPI endpoints. FastAPI runs these
+blocking handlers in its worker threadpool, which prevents long database or Blob Storage operations
+from blocking the event loop.
+
+The next larger concurrency step would be a planned migration to SQLAlchemy `AsyncSession`,
+`asyncpg`, and the Azure Blob async client.
 
 ## Implemented MVP Scope
 
@@ -116,7 +139,14 @@ poetry run pytest
 - CRUD endpoints for suppliers, warehouses, and deliveries.
 - Delivery document upload, list, download, and soft delete.
 - Azure Blob Storage adapter compatible with Azurite for local development.
+- Chunked delivery-document downloads streamed from Blob Storage through the API.
+- Blob cleanup when document metadata cannot be committed after a successful upload.
+- Document soft delete hides metadata from active APIs but leaves the blob object in storage.
+- In-memory per-client upload rate limiting for document uploads.
+- Azurite local emulator configured to tolerate newer Azure SDK API versions.
+- Blocking document storage paths run in FastAPI's worker threadpool to avoid blocking the event loop.
+- API key authentication and WHS operator authorization dependency for non-health endpoints.
 - Dockerfile and Docker Compose for local startup.
-- pytest API and service tests.
-- GitHub Actions workflow for linting, tests, coverage, and Docker build.
+- pytest API, service, and opt-in Azurite integration tests.
+- GitHub Actions workflow for linting, tests, Azurite integration, coverage, and Docker build.
 - GitHub Actions image publishing to GitHub Container Registry on `main`.

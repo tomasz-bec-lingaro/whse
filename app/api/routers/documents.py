@@ -1,14 +1,15 @@
 from datetime import UTC, datetime
-from io import BytesIO
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.api import openapi_examples as examples
-from app.api.dependencies import get_storage
+from app.api.dependencies import enforce_upload_rate_limit, get_storage
 from app.core.config import settings
+from app.core.errors import StorageOperationError
 from app.db.models import Delivery, DeliveryDocument
 from app.db.session import get_db
 from app.schemas.documents import DeliveryDocumentRead
@@ -29,10 +30,13 @@ def _get_delivery_or_404(delivery_id: int, db: Session) -> Delivery:
 
 def _get_document_or_404(delivery_id: int, document_id: int, db: Session) -> DeliveryDocument:
     document = db.scalar(
-        select(DeliveryDocument).where(
+        select(DeliveryDocument)
+        .join(Delivery, Delivery.id == DeliveryDocument.delivery_id)
+        .where(
             DeliveryDocument.id == document_id,
             DeliveryDocument.delivery_id == delivery_id,
             DeliveryDocument.deleted_at.is_(None),
+            Delivery.deleted_at.is_(None),
         )
     )
     if document is None:
@@ -56,18 +60,21 @@ def _get_document_or_404(delivery_id: int, document_id: int, db: Session) -> Del
         404: {"content": {"application/json": {"example": examples.NOT_FOUND_RESPONSE}}},
     },
 )
-async def upload_document(
+def upload_document(
     delivery_id: int,
+    _rate_limit: None = Depends(enforce_upload_rate_limit),
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     storage: BlobStorage = Depends(get_storage),
 ) -> DeliveryDocument:
     _get_delivery_or_404(delivery_id, db)
 
-    content = await file.read()
+    file.file.seek(0)
+    content = file.file.read()
     validate_upload(
         filename=file.filename,
         content_type=file.content_type,
+        content=content,
         size_bytes=len(content),
         max_size_mb=settings.max_upload_size_mb,
     )
@@ -93,7 +100,15 @@ async def upload_document(
         data=content,
         content_type=document.content_type,
     )
-    db.commit()
+    try:
+        db.commit()
+    except SQLAlchemyError:
+        db.rollback()
+        try:
+            storage.delete(document.blob_path)
+        except StorageOperationError:
+            pass
+        raise
     db.refresh(document)
     return document
 
@@ -137,11 +152,13 @@ def download_document(
     storage: BlobStorage = Depends(get_storage),
 ) -> StreamingResponse:
     document = _get_document_or_404(delivery_id, document_id, db)
-    data = storage.download(document.blob_path)
     return StreamingResponse(
-        BytesIO(data),
+        storage.download_chunks(document.blob_path),
         media_type=document.content_type,
-        headers={"Content-Disposition": f'attachment; filename="{document.filename}"'},
+        headers={
+            "Content-Disposition": f'attachment; filename="{document.filename}"',
+            "Content-Length": str(document.size_bytes),
+        },
     )
 
 
@@ -149,7 +166,7 @@ def download_document(
     "/{delivery_id}/documents/{document_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Soft delete delivery document",
-    description="Deletes the blob object and marks document metadata as deleted.",
+    description="Marks document metadata as deleted and leaves the blob object in storage.",
     response_description="Document deleted.",
     responses={404: {"content": {"application/json": {"example": examples.NOT_FOUND_RESPONSE}}}},
 )
@@ -157,9 +174,7 @@ def delete_document(
     delivery_id: int,
     document_id: int,
     db: Session = Depends(get_db),
-    storage: BlobStorage = Depends(get_storage),
 ) -> None:
     document = _get_document_or_404(delivery_id, document_id, db)
-    storage.delete(document.blob_path)
     document.deleted_at = datetime.now(UTC)
     db.commit()

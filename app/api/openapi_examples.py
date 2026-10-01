@@ -53,7 +53,6 @@ DELIVERY_DOCUMENT_RESPONSE = {
     "delivery_id": 1,
     "filename": "delivery-note.pdf",
     "content_type": "application/pdf",
-    "blob_path": "deliveries/1/documents/1/delivery-note.pdf",
     "size_bytes": 24576,
     "uploaded_at": "2026-10-01T10:45:00Z",
 }

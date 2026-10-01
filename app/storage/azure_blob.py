@@ -1,3 +1,5 @@
+from collections.abc import Iterator
+
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.blob import BlobServiceClient, ContentSettings
 
@@ -31,12 +33,25 @@ class AzureBlobStorage:
             raise StorageOperationError("File upload to Blob Storage failed.") from exc
 
     def download(self, path: str) -> bytes:
+        return b"".join(self.download_chunks(path))
+
+    def download_chunks(self, path: str, chunk_size: int = 1024 * 1024) -> Iterator[bytes]:
         try:
-            return self.container_client.download_blob(path).readall()
+            downloader = self.container_client.download_blob(path)
         except ResourceNotFoundError as exc:
             raise StorageOperationError("File was not found in Blob Storage.") from exc
         except Exception as exc:
             raise StorageOperationError("File download from Blob Storage failed.") from exc
+
+        def iter_chunks() -> Iterator[bytes]:
+            try:
+                yield from downloader.chunks()
+            except ResourceNotFoundError as exc:
+                raise StorageOperationError("File was not found in Blob Storage.") from exc
+            except Exception as exc:
+                raise StorageOperationError("File download from Blob Storage failed.") from exc
+
+        return iter_chunks()
 
     def delete(self, path: str) -> None:
         try:

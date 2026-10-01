@@ -22,6 +22,7 @@ def build_document_blob_path(delivery_id: int, document_id: int, filename: str) 
 def validate_upload(
     filename: str | None,
     content_type: str | None,
+    content: bytes,
     size_bytes: int,
     max_size_mb: int,
 ) -> None:
@@ -33,3 +34,7 @@ def validate_upload(
         raise HTTPException(status_code=400, detail="Uploaded file is empty.")
     if size_bytes > max_size_mb * 1024 * 1024:
         raise HTTPException(status_code=413, detail="Uploaded file is too large.")
+    if content_type == "application/pdf" and not content.startswith(b"%PDF-"):
+        raise HTTPException(status_code=400, detail="Invalid PDF file content.")
+    if content_type == "image/jpeg" and not content.startswith(b"\xff\xd8\xff"):
+        raise HTTPException(status_code=400, detail="Invalid JPG file content.")
