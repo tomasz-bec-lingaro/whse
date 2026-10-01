@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## HSE-008 - GitHub Actions coverage summary - 2026-10-01
+
+- Added a GitHub Actions step that publishes pytest coverage to the job summary after tests.
+
 ## HSE-007 - CI workflow YAML fix - 2026-10-01
 
 - Quoted GitHub Actions environment values containing colons so the workflow parser accepts the CI file before starting jobs.
