@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## WHSE-012 - Multi-platform package image - 2026-10-01
+
+- Updated GHCR publishing to build the versioned Docker image for `linux/amd64` and `linux/arm64`.
+
 ## WHSE-011 - Rename service branding - 2026-10-01
 
 - Renamed project branding, package names, Docker resources, documentation, and local defaults to WHSE.
