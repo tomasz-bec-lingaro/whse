@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## HSE-007 - CI workflow YAML fix - 2026-10-01
+
+- Quoted GitHub Actions environment values containing colons so the workflow parser accepts the CI file before starting jobs.
+
 ## HSE-006 - Test suite refactor - 2026-10-01
 
 - Split the long API flow test module into focused test modules by domain.

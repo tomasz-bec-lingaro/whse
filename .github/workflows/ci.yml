@@ -14,9 +14,9 @@ jobs:
   test-build:
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: sqlite+pysqlite:///:memory:
-      AZURE_STORAGE_CONNECTION_STRING: UseDevelopmentStorage=true
-      AZURE_STORAGE_CONTAINER_NAME: test-documents
+      DATABASE_URL: "sqlite+pysqlite:///:memory:"
+      AZURE_STORAGE_CONNECTION_STRING: "UseDevelopmentStorage=true"
+      AZURE_STORAGE_CONTAINER_NAME: "test-documents"
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}
     steps:
@@ -57,10 +57,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RUN_AZURITE_INTEGRATION: "1"
-      AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;
-      AZURE_STORAGE_CONTAINER_NAME: integration-documents
-      DATABASE_URL: sqlite+pysqlite:///:memory:
-      API_KEY: test-api-key
+      AZURE_STORAGE_CONNECTION_STRING: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;"
+      AZURE_STORAGE_CONTAINER_NAME: "integration-documents"
+      DATABASE_URL: "sqlite+pysqlite:///:memory:"
+      API_KEY: "test-api-key"
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
