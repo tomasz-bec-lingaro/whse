@@ -1,1 +1,1 @@
-"""HSE delivery service application package."""
+"""WHSE delivery service application package."""

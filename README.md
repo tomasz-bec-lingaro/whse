@@ -1,4 +1,4 @@
-# HSE Microservice - Delivery and Document Management
+# WHSE Microservice - Delivery and Document Management
 
 Backend microservice for the WHS system responsible for warehouse delivery management, delivery document metadata, and file handling through Blob Storage.
 
@@ -52,7 +52,7 @@ The API container runs Alembic migrations before starting the FastAPI server.
 GitHub Actions publishes the Docker image to GitHub Container Registry:
 
 ```text
-ghcr.io/tomasz-bec-lingaro/hse
+ghcr.io/tomasz-bec-lingaro/whse
 ```
 
 The published tag is the package version from `tool.poetry.version` in `pyproject.toml`,
@@ -67,19 +67,19 @@ echo "<github-token>" | docker login ghcr.io -u "<github-username>" --password-s
 Pull a versioned image:
 
 ```bash
-docker pull ghcr.io/tomasz-bec-lingaro/hse:0.1.0
+docker pull ghcr.io/tomasz-bec-lingaro/whse:0.1.0
 ```
 
 Run the published package with the local PostgreSQL and Azurite services:
 
 ```bash
-docker compose --project-name hse up -d postgres azurite
+docker compose --project-name whse up -d postgres azurite
 docker run --rm \
-  --name hse-delivery-api \
-  --network hse_default \
+  --name whse-delivery-api \
+  --network whse_default \
   -p 8000:8000 \
   --env-file .env.example \
-  ghcr.io/tomasz-bec-lingaro/hse:0.1.0
+  ghcr.io/tomasz-bec-lingaro/whse:0.1.0
 ```
 
 For production, use the same image tag with real environment values injected from the deployment

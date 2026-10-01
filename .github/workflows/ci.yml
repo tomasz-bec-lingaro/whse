@@ -62,7 +62,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: hse-delivery-service:test
+          tags: whse-delivery-service:test
 
   azurite-integration:
     runs-on: ubuntu-latest
@@ -89,7 +89,7 @@ jobs:
 
       - name: Start Azurite
         run: |
-          docker run --detach --name hse-azurite --publish 127.0.0.1:10000:10000 \
+          docker run --detach --name whse-azurite --publish 127.0.0.1:10000:10000 \
             mcr.microsoft.com/azure-storage/azurite:3.33.0@sha256:2628ee10a72833cc344b9d194cd8b245543892b307d16cf26a2cf55a15b816af \
             azurite-blob --blobHost 0.0.0.0 --blobPort 10000 --skipApiVersionCheck
 

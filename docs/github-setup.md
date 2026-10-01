@@ -3,7 +3,7 @@
 Repository:
 
 ```text
-git@github.com:tomasz-bec-lingaro/hse.git
+git@github.com:tomasz-bec-lingaro/whse.git
 ```
 
 ## Local Git Initialization
@@ -12,7 +12,7 @@ The local repository should be initialized with:
 
 ```bash
 git init
-git remote add origin git@github.com:tomasz-bec-lingaro/hse.git
+git remote add origin git@github.com:tomasz-bec-lingaro/whse.git
 git branch -M main
 ```
 
@@ -38,7 +38,7 @@ The workflow:
 Image path:
 
 ```text
-ghcr.io/tomasz-bec-lingaro/hse:<tag>
+ghcr.io/tomasz-bec-lingaro/whse:<tag>
 ```
 
 Pull request and manual workflow builds do not push images.
@@ -60,11 +60,11 @@ For production deployment, add these repository or environment secrets when the 
 Example commands:
 
 ```bash
-gh secret set DATABASE_URL --repo tomasz-bec-lingaro/hse
-gh secret set AZURE_STORAGE_CONNECTION_STRING --repo tomasz-bec-lingaro/hse
-gh secret set AZURE_STORAGE_CONTAINER_NAME --repo tomasz-bec-lingaro/hse
-gh secret set CORS_ALLOWED_ORIGINS --repo tomasz-bec-lingaro/hse
-gh secret set API_KEY --repo tomasz-bec-lingaro/hse
+gh secret set DATABASE_URL --repo tomasz-bec-lingaro/whse
+gh secret set AZURE_STORAGE_CONNECTION_STRING --repo tomasz-bec-lingaro/whse
+gh secret set AZURE_STORAGE_CONTAINER_NAME --repo tomasz-bec-lingaro/whse
+gh secret set CORS_ALLOWED_ORIGINS --repo tomasz-bec-lingaro/whse
+gh secret set API_KEY --repo tomasz-bec-lingaro/whse
 ```
 
 Only run these commands with real values. Do not commit secrets to the repository.

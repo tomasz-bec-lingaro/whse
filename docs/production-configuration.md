@@ -65,7 +65,7 @@ The CI workflow builds on pull requests, pushes to `main`, and manual dispatch. 
 Image naming convention:
 
 ```text
-ghcr.io/tomasz-bec-lingaro/hse:<tag>
+ghcr.io/tomasz-bec-lingaro/whse:<tag>
 ```
 
 Published tags:

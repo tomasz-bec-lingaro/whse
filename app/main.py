@@ -11,7 +11,7 @@ from app.core.errors import StorageOperationError
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="HSE Delivery and Document Management API",
+        title="WHSE Delivery and Document Management API",
         description=(
             "WHS backend microservice for warehouse deliveries, suppliers, warehouses, "
             "and delivery document storage."

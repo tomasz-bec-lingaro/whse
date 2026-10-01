@@ -2,11 +2,11 @@ services:
   api:
     build:
       context: .
-    container_name: hse-delivery-api
+    container_name: whse-delivery-api
     environment:
       APP_ENV: ${APP_ENV:-local}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
-      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://hse:hse@postgres:5432/hse_delivery}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://whse:whse@postgres:5432/whse_delivery}
       AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING:-DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;}
       AZURE_STORAGE_CONTAINER_NAME: ${AZURE_STORAGE_CONTAINER_NAME:-delivery-documents}
       MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-10}
@@ -25,24 +25,24 @@ services:
 
   postgres:
     image: postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea
-    container_name: hse-delivery-postgres
+    container_name: whse-delivery-postgres
     environment:
-      POSTGRES_USER: hse
-      POSTGRES_PASSWORD: hse
-      POSTGRES_DB: hse_delivery
+      POSTGRES_USER: whse
+      POSTGRES_PASSWORD: whse
+      POSTGRES_DB: whse_delivery
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U hse -d hse_delivery"]
+      test: ["CMD-SHELL", "pg_isready -U whse -d whse_delivery"]
       interval: 5s
       timeout: 5s
       retries: 10
 
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite:3.33.0@sha256:2628ee10a72833cc344b9d194cd8b245543892b307d16cf26a2cf55a15b816af
-    container_name: hse-delivery-azurite
+    container_name: whse-delivery-azurite
     command: azurite-blob --blobHost 0.0.0.0 --blobPort 10000 --skipApiVersionCheck
     ports:
       - "127.0.0.1:10000:10000"

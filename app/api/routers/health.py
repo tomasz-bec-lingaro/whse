@@ -15,11 +15,13 @@ router = APIRouter()
     responses={
         200: {
             "content": {
-                "application/json": {"example": {"status": "ok", "service": "hse-delivery-service"}}
+                "application/json": {
+                    "example": {"status": "ok", "service": "whse-delivery-service"}
+                }
             }
         }
     },
 )
 def health(db: Session = Depends(get_db)) -> dict[str, str]:
     db.execute(text("SELECT 1"))
-    return {"status": "ok", "service": "hse-delivery-service"}
+    return {"status": "ok", "service": "whse-delivery-service"}

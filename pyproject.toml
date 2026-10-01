@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "hse-delivery-service"
+name = "whse-delivery-service"
 version = "0.1.0"
 description = "WHS delivery and document management microservice."
-authors = ["HSE Team"]
+authors = ["WHSE Team"]
 readme = "README.md"
 packages = [{ include = "app" }]
 
